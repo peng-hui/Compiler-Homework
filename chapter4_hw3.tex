@@ -1,0 +1,290 @@
+\documentclass[a4paper, 10pt]{article}
+\usepackage[UTF8]{ctex}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{multirow}
+\lstset{
+    numbers=left, 
+    numberstyle= \tiny, 
+    keywordstyle= \color{ blue!70},
+    commentstyle= \color{red!50!green!50!blue!50}, 
+    frame=shadowbox, % 阴影效果
+    rulesepcolor= \color{ red!20!green!20!blue!20} ,
+    escapeinside=``, % 英文分号中可写入中文
+    xleftmargin=2em,xrightmargin=2em, aboveskip=1em,
+    framexleftmargin=2em
+} 
+\geometry{left = 1.0 cm, right = 1.0cm, top = 2.0cm, bottom = 2.0cm	}
+\title{编译原理第四章(三)}
+\author{李鹏辉}
+
+\begin{document}
+\maketitle
+1. （4.5.2)对于文法$S \rightarrow SS +|SS* |a $和下面最右边句型，指出其归约时使用的句柄\\
+
+1) $SSS+a*+$
+
+句柄为$S \rightarrow SS+$, 位置为上述最右句型的第二个S后的SS+\\
+
+2) $SS+a*a+$
+
+句柄为$S \rightarrow SS+$, 位置为该最右句型的起始SS+\\
+
+3) $aaa*a++$
+
+句柄为$S \rightarrow a$,位置为起始的a.\\
+
+2. (4.6.2)对于文法$S\rightarrow SS+ |SS*|a$， 增广该文法构造SLR项目集。计算这些项目集的GOTO函数集，给出这个文法的语法分析表。这个文法是SLR文法吗？\\
+
+$state \; I_0:$ 
+
+$S' \rightarrow .S$
+
+$S \rightarrow .SS+$
+
+$S \rightarrow .SS*$
+
+$S \rightarrow .a$\\
+
+
+$state \; I_1:$
+
+$S'\rightarrow S.$
+
+$S\rightarrow S.S+$
+
+$S\rightarrow S.S*$\\
+
+$state \; I_2:$
+
+$S\rightarrow SS.+$
+
+$S \rightarrow SS.*$\\
+
+$state \; I_3:$
+
+$S \rightarrow SS+.$\\
+
+$state \; I_4:$
+
+$S\rightarrow SS*.$\\
+
+
+$state \; I_5:$
+
+$S \rightarrow a.$\\
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+\multirow{2}{*}{states} & \multicolumn{4}{c|}{ACTION} &GODO \\
+\cline{2-6}
+&a & + & * & $\$$ & S \\
+\hline
+$I_0$ &$S_5$ & & & &$I_1$ \\
+$I_1$ & & & &acc & $I_2$\\
+$I_2$ & &$S_3$&$S_4$ & & \\
+$I_3$ &$R_1$&$R_1$ &$R_1$ &$R_1$ & \\
+$I_4$ &$R_2$ &$R_2$ & $R_2$&$R_2$ & \\
+$I_5$ &$R_3$ &$R_3$ &$R_3$ &$R_3$& \\
+
+\hline
+\end{tabular}
+\end{table}
+
+该文法无冲突，则是SLR文法
+
+
+3.(4.7.1)对于文法$S \rightarrow SS+|SS*|a$，构造
+
+1) 规范LR项目集合，并构造其语法分析表
+
+规范LR(0)项目集合如上,下面构造规范LR(1)项目集合。
+
+$state \; I_0$
+
+$[S'\rightarrow .S, \;\$]$
+
+$[S \rightarrow .SS+ , \$/a]$
+
+$[S \rightarrow .SS* , \$/a]$
+
+
+$[S \rightarrow .a , \$/a]$\\
+
+$state \; I_1$
+
+
+$[S' \rightarrow S. , \$]$
+
+$[S \rightarrow S.S+ , \$/a]$
+
+$[S \rightarrow S.S* , \$/a]$
+
+$[S \rightarrow .SS+ , +/*/a]$
+
+$[S \rightarrow .SS* , +/*/a]$
+
+$[S \rightarrow .a , +/*/a]$\\
+
+$state \; I_2$
+
+$[S \rightarrow SS.+ , \$/a]$
+
+$[S \rightarrow SS.* , \$/a]$
+
+$[S \rightarrow S.S+ , +/*/a]$
+
+$[S \rightarrow S.S* , +/*/a]$
+
+$[S \rightarrow .SS+ , +/*/a]$
+
+$[S \rightarrow .SS* , +/*/a]$
+
+$[S \rightarrow .a , +/*/a]$\\
+
+$state \; I_3$
+
+$[S \rightarrow SS.+ , +/*/a]$
+
+$[S \rightarrow SS.* , +/*/a]$
+
+$[S \rightarrow S.S+ , +/*/a]$
+
+$[S \rightarrow S.S* , +/*/a]$
+
+$[S \rightarrow .SS+ , +/*/a]$
+
+$[S \rightarrow .SS* , +/*/a]$
+
+$[S \rightarrow .a , +/*/a]$\\
+
+$state \; I_4$
+
+$[S \rightarrow SS+. , \$/a]$\\
+
+
+$state \; I_5$
+
+$[S \rightarrow SS*. , \$/a]$\\
+
+$state \;I_6$
+
+$[S \rightarrow SS+. , +/*/a]$\\
+
+$state \; I_7$
+
+$[S \rightarrow SS*. , +/*/a]$\\
+
+$state \; I_8$
+
+$[S \rightarrow .a , \$/a]$\\
+
+$state \; I_9$
+
+$[S \rightarrow .a , +/*/a]$\\
+
+\begin{table}[H]
+\centering
+\begin{tabular}{c|c|c|c|c|c}
+\hline
+\multirow{2}{*}{states} & \multicolumn{4}{c|}{ACTION} &GODO \\
+\cline{2-6}
+&a & + & * & $\$$ & S \\
+\hline
+$I_0$ &$S_8$ & & & &$I_1$ \\
+$I_1$ & $S_9$& & &acc & $I_2$\\
+$I_2$ &$S_9$&$S_4$&$S_5$ & &$I_3$ \\
+$I_3$ &$R_9$&$R_6$ &$R_7$ & &$I_3$ \\
+
+$I_4$ &$R_1$&& &$R_1$ & \\
+$I_5$ &$R_2$ & & &$R_2$  & \\
+$I_6$ &$R_1$&$R_1$ &$R_1$ & & \\
+$I_7$ &$R_2$ &$R_2$ & $R_2$&& \\
+$I_8$ & & & &$R_3$ & \\
+$I_9$ &$R_3$ &$R_3$ & $R_3$ & & \\
+\hline
+\end{tabular}
+\end{table}
+
+2) LALR项目集族
+
+
+
+$state \; I_0$
+
+$[S'\rightarrow .S, \;\$]$
+
+$[S \rightarrow .SS+ , \$/a]$
+
+$[S \rightarrow .SS* , \$/a]$
+
+
+$[S \rightarrow .a , \$/a]$\\
+
+$state \; I_1$
+
+
+$[S' \rightarrow S. , \$]$
+
+$[S \rightarrow S.S+ , \$/a]$
+
+$[S \rightarrow S.S* , \$/a]$
+
+$[S \rightarrow .SS+ , +/*/a]$
+
+$[S \rightarrow .SS* , +/*/a]$
+
+$[S \rightarrow .a , +/*/a]$\\
+
+$state \; I_2$
+
+$[S \rightarrow SS.+ , \$/a]$
+
+$[S \rightarrow SS.* , \$/a]$
+
+$[S \rightarrow S.S+ , +/*/a]$
+
+$[S \rightarrow S.S* , +/*/a]$
+
+$[S \rightarrow .SS+ , +/*/a]$
+
+$[S \rightarrow .SS* , +/*/a]$
+
+$[S \rightarrow .a , +/*/a]$\\
+
+$state \; I_3$
+
+$[S \rightarrow SS.+ , +/*/a]$
+
+$[S \rightarrow SS.* , +/*/a]$
+
+$[S \rightarrow S.S+ , +/*/a]$
+
+$[S \rightarrow S.S* , +/*/a]$
+
+$[S \rightarrow .SS+ , +/*/a]$
+
+$[S \rightarrow .SS* , +/*/a]$
+
+$[S \rightarrow .a , +/*/a]$\\
+
+$state \; I_{46}$
+
+$[S \rightarrow SS+. , \$/+/*/a]$\\
+
+
+$state \; I_{57}$
+
+$[S \rightarrow SS*. , \$/+/*/a]$\\
+
+
+$state \; I_{89}$
+
+$[S \rightarrow .a , \$ +/*/a]$\\
+\end{document}
